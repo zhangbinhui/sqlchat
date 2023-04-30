@@ -12,7 +12,7 @@ interface ConnectionContext {
 
 const samplePGConnection: Connection = {
   id: "sample-edu-mysql",
-  title: "高校信息查询",
+  title: "高校信息公开数据",
   engineType: Engine.MySQL,
   host: "mysql8.cqlphmp676ly.ap-northeast-3.rds.amazonaws.com",
   port: "3306",
@@ -20,6 +20,18 @@ const samplePGConnection: Connection = {
   password: "edu_public",
   database: "edu_public_data",
 };
+
+const samplePGConnection: Connection = {
+  id: "sample-fu-mysql",
+  title: "期货业公开数据",
+  engineType: Engine.MySQL,
+  host: "mysql8.cqlphmp676ly.ap-northeast-3.rds.amazonaws.com",
+  port: "3306",
+  username: "fu_public",
+  password: "fu_public",
+  database: "fu_public_data",
+};
+
 
 interface ConnectionState {
   connectionList: Connection[];
