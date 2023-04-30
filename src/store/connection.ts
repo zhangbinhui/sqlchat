@@ -11,14 +11,14 @@ interface ConnectionContext {
 }
 
 const samplePGConnection: Connection = {
-  id: "sample-pg",
-  title: "Sample PostgreSQL",
-  engineType: Engine.PostgreSQL,
-  host: "db.swxkyqvcefxcjecynews.supabase.co",
-  port: "5432",
-  username: "readonly_user",
-  password: "sqlchat",
-  database: "sample-employee",
+  id: "sample-edu-mysql",
+  title: "高校信息查询",
+  engineType: Engine.MySQL,
+  host: "mysql8.cqlphmp676ly.ap-northeast-3.rds.amazonaws.com",
+  port: "3306",
+  username: "edu_public",
+  password: "edu_public",
+  database: "edu_public_data",
 };
 
 interface ConnectionState {
