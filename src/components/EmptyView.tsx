@@ -1,52 +1,64 @@
-import { useConversationStore, useConnectionStore, useMessageStore, useUserStore } from "@/store";
+import {
+  useConversationStore,
+  useConnectionStore,
+  useMessageStore,
+} from "@/store";
 import { CreatorRole } from "@/types";
 import { generateUUID } from "@/utils";
 import useDarkMode from "@/hooks/useDarkmode";
 import Icon from "./Icon";
 
 // examples are used to show some examples to the user.
-const examples = ["Give me an example schema about employee", "How to create a view in MySQL?"];
+const examples = [
+  "Give me an example schema about employee",
+  "How to create a view in MySQL?",
+];
 
 interface Props {
   className?: string;
-  sendMessage: () => Promise<void>;
+  sendMessage: (content: string) => Promise<void>;
 }
 
 const EmptyView = (props: Props) => {
   const { className, sendMessage } = props;
   const connectionStore = useConnectionStore();
   const conversationStore = useConversationStore();
-  const userStore = useUserStore();
   const messageStore = useMessageStore();
   const isDarkMode = useDarkMode();
 
   const handleExampleClick = async (content: string) => {
-    let conversation = conversationStore.getConversationById(conversationStore.currentConversationId);
+    let conversation = conversationStore.getConversationById(
+      conversationStore.currentConversationId
+    );
     if (!conversation) {
       const currentConnectionCtx = connectionStore.currentConnectionCtx;
       if (!currentConnectionCtx) {
         conversation = conversationStore.createConversation();
       } else {
-        conversation = conversationStore.createConversation(currentConnectionCtx.connection.id, currentConnectionCtx.database?.name);
+        conversation = conversationStore.createConversation(
+          currentConnectionCtx.connection.id,
+          currentConnectionCtx.database?.name
+        );
       }
     }
-
-    messageStore.addMessage({
-      id: generateUUID(),
-      conversationId: conversation.id,
-      creatorId: userStore.currentUser.id,
-      creatorRole: CreatorRole.User,
-      createdAt: Date.now(),
-      content: content,
-      status: "DONE",
-    });
-    await sendMessage();
+    await sendMessage(content);
   };
 
   return (
-    <div className={`${className || ""} w-full h-full flex flex-col justify-start items-center`}>
+    <div
+      className={`${
+        className || ""
+      } w-full h-full flex flex-col justify-start items-center`}
+    >
       <div className="w-96 max-w-full font-medium leading-loose mb-8">
-        <img src={isDarkMode ? "/chat-logo-and-text-dark-mode.webp" : "/chat-logo-and-text.webp"} alt="sql-chat-logo" />
+        <img
+          src={
+            isDarkMode
+              ? "/chat-logo-and-text-dark-mode.webp"
+              : "/chat-logo-and-text.webp"
+          }
+          alt="sql-chat-logo"
+        />
       </div>
       <div className="w-full grid grid-cols-2 sm:grid-cols-3 gap-4">
         <div className="w-full flex flex-col justify-start items-center">

@@ -1,7 +1,11 @@
-import { createParser, ParsedEvent, ReconnectInterval } from "eventsource-parser";
+import {
+  createParser,
+  ParsedEvent,
+  ReconnectInterval,
+} from "eventsource-parser";
 import { NextRequest } from "next/server";
 import { API_KEY } from "@/env";
-import { openAIApiEndpoint, openAIApiKey } from "@/utils";
+import { openAIApiEndpoint, openAIApiKey, gpt35 } from "@/utils";
 
 export const config = {
   runtime: "edge",
@@ -26,7 +30,18 @@ const handler = async (req: NextRequest) => {
   const reqBody = await req.json();
   const openAIApiConfig = reqBody.openAIApiConfig;
   const apiKey = openAIApiConfig?.key || openAIApiKey;
-  const apiEndpoint = getApiEndpoint(openAIApiConfig?.endpoint || openAIApiEndpoint);
+
+  if (!apiKey) {
+    return new Response("Unauthorized", {
+      status: 401,
+      statusText:
+        "OpenAI API Key is missing. You can supply your own key via Settings.",
+    });
+  }
+
+  const apiEndpoint = getApiEndpoint(
+    openAIApiConfig?.endpoint || openAIApiEndpoint
+  );
   const res = await fetch(apiEndpoint, {
     headers: {
       "Content-Type": "application/json",
@@ -34,12 +49,14 @@ const handler = async (req: NextRequest) => {
     },
     method: "POST",
     body: JSON.stringify({
-      model: "gpt-3.5-turbo",
+      model: gpt35.name,
       messages: reqBody.messages,
-      temperature: 0,
-      frequency_penalty: 0.0,
-      presence_penalty: 0.0,
+      temperature: gpt35.temperature,
+      frequency_penalty: gpt35.frequency_penalty,
+      presence_penalty: gpt35.presence_penalty,
       stream: true,
+      // Send end-user ID to help OpenAI monitor and detect abuse.
+      user: req.ip,
     }),
   });
   if (!res.ok) {

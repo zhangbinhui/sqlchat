@@ -2,21 +2,24 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import TextareaAutosize from "react-textarea-autosize";
-import { useConversationStore, useConnectionStore, useMessageStore, useUserStore } from "@/store";
+import {
+  useConversationStore,
+  useConnectionStore,
+  useMessageStore,
+} from "@/store";
 import { CreatorRole } from "@/types";
 import { generateUUID } from "@/utils";
 import Icon from "../Icon";
 
 interface Props {
   disabled?: boolean;
-  sendMessage: () => Promise<void>;
+  sendMessage: (content: string) => Promise<void>;
 }
 
 const MessageTextarea = (props: Props) => {
   const { disabled, sendMessage } = props;
   const { t } = useTranslation();
   const connectionStore = useConnectionStore();
-  const userStore = useUserStore();
   const conversationStore = useConversationStore();
   const messageStore = useMessageStore();
   const [value, setValue] = useState<string>("");
@@ -34,13 +37,18 @@ const MessageTextarea = (props: Props) => {
   };
 
   const handleSend = async () => {
-    let conversation = conversationStore.getConversationById(conversationStore.currentConversationId);
+    let conversation = conversationStore.getConversationById(
+      conversationStore.currentConversationId
+    );
     if (!conversation) {
       const currentConnectionCtx = connectionStore.currentConnectionCtx;
       if (!currentConnectionCtx) {
         conversation = conversationStore.createConversation();
       } else {
-        conversation = conversationStore.createConversation(currentConnectionCtx.connection.id, currentConnectionCtx.database?.name);
+        conversation = conversationStore.createConversation(
+          currentConnectionCtx.connection.id,
+          currentConnectionCtx.database?.name
+        );
       }
     }
     if (!value) {
@@ -51,18 +59,9 @@ const MessageTextarea = (props: Props) => {
       return;
     }
 
-    messageStore.addMessage({
-      id: generateUUID(),
-      conversationId: conversation.id,
-      creatorId: userStore.currentUser.id,
-      creatorRole: CreatorRole.User,
-      createdAt: Date.now(),
-      content: value,
-      status: "DONE",
-    });
     setValue("");
     textareaRef.current!.value = "";
-    await sendMessage();
+    await sendMessage(value);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
