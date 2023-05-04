@@ -10,25 +10,25 @@ interface ConnectionContext {
   database?: Database;
 }
 
-const samplePGConnection: Connection = {
+const sampleEduMySQLConnection: Connection = {
   id: "sample-edu-mysql",
   title: "高校信息公开数据",
   engineType: Engine.MySQL,
   host: "mysql8.cqlphmp676ly.ap-northeast-3.rds.amazonaws.com",
   port: "3306",
-  username: "edu_public",
-  password: "edu_public",
+  username: "edu_public_read",
+  password: "edu_public_read",
   database: "edu_public_data",
 };
 
-const samplePGConnection: Connection = {
+const sampleFuMySQLConnection: Connection = {
   id: "sample-fu-mysql",
   title: "期货业公开数据",
   engineType: Engine.MySQL,
   host: "mysql8.cqlphmp676ly.ap-northeast-3.rds.amazonaws.com",
   port: "3306",
-  username: "fu_public",
-  password: "fu_public",
+  username: "fu_public_read",
+  password: "fu_public_read",
   database: "fu_public_data",
 };
 
@@ -60,7 +60,7 @@ interface ConnectionState {
 export const useConnectionStore = create<ConnectionState>()(
   persist(
     (set, get) => ({
-      connectionList: [samplePGConnection],
+      connectionList: [sampleEduMySQLConnection,sampleFuMySQLConnection],
       databaseList: [],
       createConnection: (connection: Connection) => {
         const createdConnection = {
